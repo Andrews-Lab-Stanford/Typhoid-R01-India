@@ -20,6 +20,8 @@ root_data_dir  <- file.path(base_dir, "Data")
 repo_data_dir  <- file.path(base_dir, "Typhoid-R01-India/data")
 manuscript_dir <- repo_data_dir
 
+cat("=== TYPHOID R01: WEEKLY DATA PREPARATION ===\n")
+
 # ── 1. Load & Process Weekly Clinical Cases ────────────────────────────────────
 cases_file <- file.path(repo_data_dir, "Typhoidcases_site_monthly weekly.xlsx")
 cat("Loading weekly cases from:", cases_file, "\n")
@@ -58,13 +60,24 @@ cases_weekly <- cases_raw %>%
   group_by(Site) %>%
   complete(week_date = seq.Date(min(week_date), max(week_date), by = "week"), 
            fill = list(clinical_cases = 0)) %>%
+  ungroup()
+
+# ── 3. Calculate Clinical Case Lags (Weekly) ──────────────────────────────────
+# We calculate lags on the FULL cases_weekly (38 sites x 52+ weeks)
+# to ensure "Lag 1" is exactly 7 days prior.
+cases_weekly <- cases_weekly %>%
   arrange(Site, week_date) %>%
+  group_by(Site) %>%
   mutate(
     cases_lag0 = clinical_cases,
     cases_lag1 = lag(clinical_cases, 1),
     cases_lag2 = lag(clinical_cases, 2),
     cases_lag3 = lag(clinical_cases, 3),
-    cases_lag4 = lag(clinical_cases, 4)
+    cases_lag4 = lag(clinical_cases, 4),
+    cases_lag5 = lag(clinical_cases, 5),
+    cases_lag6 = lag(clinical_cases, 6),
+    cases_lag7 = lag(clinical_cases, 7),
+    cases_lag8 = lag(clinical_cases, 8)
   ) %>%
   ungroup()
 
@@ -173,8 +186,9 @@ merged_weekly <- merged_weekly %>%
   inner_join(site_status, by = "Site")
 
 # Final analytic set: filter complete cases for weather/HF183 and scale
+# We filter for lag8 to ensure all biweekly windows are available
 analysis_df_weekly <- merged_weekly %>%
-  filter(!is.na(temp), !is.na(hf183), !is.na(cases_lag4)) %>%
+  filter(!is.na(temp), !is.na(hf183), !is.na(cases_lag8)) %>%
   mutate(across(
     c(flow, rainfall, temp, hf183,
       pct_under_15, pct_water_improved, pct_toilet_improved, pct_high_ses),

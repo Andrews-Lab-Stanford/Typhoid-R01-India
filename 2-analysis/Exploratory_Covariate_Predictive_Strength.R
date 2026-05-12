@@ -14,8 +14,9 @@ library(broom.mixed)
 library(patchwork)
 
 # 1. CONFIGURE PATHS
-data_dir <- "Data"
-manuscript_dir <- "R01-Typhoid-Phage-Wastewater-Manuscript/Analysis Data"
+# Assuming running from repo root
+data_dir <- "data"
+manuscript_dir <- "data" 
 
 # 2. LOAD DATA
 # 2.1 Phage Data

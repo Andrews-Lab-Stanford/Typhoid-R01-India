@@ -10,7 +10,7 @@ library(patchwork) # for combining plots
 
 # 1. CONFIGURE PATHS
 data_dir <- "Data"
-manuscript_dir <- "R01-Typhoid-Phage-Wastewater-Manuscript/Analysis Data"
+manuscript_dir <- "data"
 
 # 2. LOAD SHARED DATA (FROM SAP ANALYSIS)
 data_rdata <- file.path("Data", "cleaned_analysis_data.RData")

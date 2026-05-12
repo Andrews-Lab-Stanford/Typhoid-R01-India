@@ -20,8 +20,6 @@ root_data_dir  <- file.path(base_dir, "Data")
 repo_data_dir  <- file.path(base_dir, "Typhoid-R01-India/data")
 manuscript_dir <- repo_data_dir
 
-cat("=== TYPHOID R01: WEEKLY DATA PREPARATION ===\n")
-
 # ── 1. Load & Process Weekly Clinical Cases ────────────────────────────────────
 cases_file <- file.path(repo_data_dir, "Typhoidcases_site_monthly weekly.xlsx")
 cat("Loading weekly cases from:", cases_file, "\n")
@@ -146,15 +144,15 @@ census_combined <- age_df %>%
 
 census_site <- census_combined %>%
   mutate(Site = as.character(as.numeric(Site))) %>%
-  mutate(
-    pct_under_15       = (as.numeric(`0-4_n`) + as.numeric(`5-14_n`)) / as.numeric(Pop),
-    pct_water_improved = as.numeric(Improved_n_water) / as.numeric(Total_n_water),
-    pct_toilet_improved = as.numeric(Improved_n_toilet) / as.numeric(Total_n_toilet),
-    # High SES = Class 1 and Class 2
-    pct_high_ses       = (as.numeric(`Class I_n`) + as.numeric(`Class II_n`)) / as.numeric(Total_n_ses)
-  ) %>%
   group_by(Site) %>%
-  summarise(across(everything(), first), .groups = "drop")
+  summarise(across(everything(), first), .groups = "drop") %>%
+  mutate(
+    pct_under_15       = 100 * (as.numeric(`0-4_n`) + as.numeric(`5-14_n`)) / as.numeric(Pop),
+    pct_water_improved = 100 * as.numeric(Improved_n_water) / as.numeric(Total_n_water),
+    pct_toilet_improved= 100 * as.numeric(Improved_n_toilet) / as.numeric(Total_n_toilet),
+    # High SES = Class 1, 2, and 3
+    pct_high_ses       = 100 * (as.numeric(`Class I_n`) + as.numeric(`Class II_n`) + as.numeric(`Class III_n`)) / as.numeric(Total_n_ses)
+  )
 
 # ── 6. Merge Weekly Data ──────────────────────────────────────────────────────
 merged_weekly <- cases_weekly %>%
@@ -187,5 +185,4 @@ cat("Final Weekly Analytic dataset:", nrow(analysis_df_weekly), "site-weeks\n")
 
 # ── 8. Save ───────────────────────────────────────────────────────────────────
 output_path <- file.path(root_data_dir, "analysis_ready_weekly.RData")
-save(cases_weekly, merged_weekly, analysis_df_weekly, file = output_path)
-
+save(cases_weekly, merged_weekly, analysis_df_weekly, census_site, site_status, file = output_path)

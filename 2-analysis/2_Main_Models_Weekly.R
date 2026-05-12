@@ -39,8 +39,8 @@ cat("Analytic dataset:", nrow(analysis_df_weekly), "site-weeks,",
 fit_models <- function(lag_n, lag_var) {
   cat("  Fitting Lag", lag_n, "weeks...\n")
   
-  # Crude: Predictor only (fully unadjusted / pooled)
-  f_crd <- paste0(" ~ ", lag_var)
+  # Crude: Predictor only + site random effect
+  f_crd <- paste0(" ~ ", lag_var, " + (1 | Site)")
   
   # Adjusted: Covariates + census variables + random effect for site.
   f_adj <- paste0(" ~ ", lag_var, " + flow + rainfall + temp + hf183 + pct_under_15 + pct_water_improved + pct_toilet_improved + pct_high_ses + (1 | Site)")
@@ -154,13 +154,13 @@ fig_q2 <- build_forest(plot_data %>% filter(Outcome == "Q2"),
 
 # ── Combined — shared legend ────────────────────────────────────────────────────
 fig_combined <- (fig_q1 | fig_q2) +
-  plot_layout(guides = "collect") +
+  plot_layout(guides = "collect") &
   theme(legend.position = "bottom")
 
 # ── Save ───────────────────────────────────────────────────────────────────────
-ggsave(file.path(figures_dir, "SAP_Slide_Q1_Weekly.png"),       fig_q1,       width = 8,  height = 6, dpi = 300)
-ggsave(file.path(figures_dir, "SAP_Slide_Q2_Weekly.png"),       fig_q2,       width = 8,  height = 6, dpi = 300)
-ggsave(file.path(figures_dir, "SAP_Slide_Combined_Weekly.png"), fig_combined, width = 15, height = 7, dpi = 300)
+ggsave(file.path(figures_dir, "SAP_Q1_Weekly.png"),       fig_q1,       width = 8,  height = 6, dpi = 300)
+ggsave(file.path(figures_dir, "SAP_Q2_Weekly.png"),       fig_q2,       width = 8,  height = 6, dpi = 300)
+ggsave(file.path(figures_dir, "SAP_Combined_Weekly.png"), fig_combined, width = 15, height = 7, dpi = 300)
 
 fig_q1
 fig_combined

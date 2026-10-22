@@ -1,0 +1,18 @@
+# Unpublished analysis dataset — this repository is public, so keep it out.
+dataset_WWphage_R01.xlsx
+data/dataset_WWphage_R01.xlsx
+
+# Generated analysis outputs, written to the working directory the script is run
+# from (re-running the scripts regenerates them)
+final_estimates.csv
+temporal_inference_results.csv
+bootstrap_ci_results.csv
+run_log.txt
+*_log.txt
+
+# Editor and OS cruft
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/
+~$*

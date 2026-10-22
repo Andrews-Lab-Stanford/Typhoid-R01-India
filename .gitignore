@@ -1,6 +1,6 @@
-# Unpublished analysis dataset — this repository is public, so keep it out.
+# This repository is public. Study data is kept outside it entirely.
+data/
 dataset_WWphage_R01.xlsx
-data/dataset_WWphage_R01.xlsx
 
 # Generated analysis outputs, written to the working directory the script is run
 # from (re-running the scripts regenerates them)
